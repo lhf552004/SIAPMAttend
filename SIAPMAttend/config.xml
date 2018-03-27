@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <employees>
+    <employee EmployeeID="30112807" Age="" AttendType="Normal" Gender="" Name=""></employee>
+    <employee EmployeeID="30112851" Age="" AttendType="Normal" Gender="" Name=""></employee>
+    <employee EmployeeID="VENDOR2464" Age="" AttendType="Normal" Gender="" Name=""></employee>
+    <employee EmployeeID="VENDOR2463" Age="" AttendType="Normal" Gender="" Name=""></employee>
+    <employee EmployeeID="TEMP1051" Age="" AttendType="Normal" Gender="" Name=""></employee>
+    <employee EmployeeID="TEMP1001" Age="" AttendType="Normal" Gender="" Name=""></employee>
+  </employees>
+  <attendTypes>
+    <attendType Name="Normal" IsShift="false" TargetHourIn="9" TargetMinuteIn="0" ShiftTime="" StartDinnerBreakHour="" StartDinnerBreakMinute="" DinnerBreakMinute="" TempBreakMinute=""></attendType>
+    <attendType Name="A" IsShift="true" TargetHourIn="6" TargetMinuteIn="45" ShiftTime="12" StartDinnerBreakHour="" StartDinnerBreakMinute="" DinnerBreakMinute="" TempBreakMinute=""></attendType>
+    <attendType Name="B" IsShift="true" TargetHourIn="18" TargetMinuteIn="45" ShiftTime="12" StartDinnerBreakHour="" StartDinnerBreakMinute="" DinnerBreakMinute="" TempBreakMinute=""></attendType>
+    <attendType Name="C" IsShift="true" TargetHourIn="6" TargetMinuteIn="45" ShiftTime="12" StartDinnerBreakHour="" StartDinnerBreakMinute="" DinnerBreakMinute="" TempBreakMinute=""></attendType>
+    <attendType Name="D" IsShift="true" TargetHourIn="18" TargetMinuteIn="45" ShiftTime="12" StartDinnerBreakHour="" StartDinnerBreakMinute="" DinnerBreakMinute="" TempBreakMinute=""></attendType>
+  </attendTypes>
+  <exportPath>C:\temp</exportPath>
+</configuration>

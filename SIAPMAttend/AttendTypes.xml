@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<attendTypes>
+  <attendType Name="Normal" IsShift="false" TargetHourIn="9" TargetMinuteIn="0" ShiftTime=""></attendType>
+  <attendType Name="A" IsShift="true" TargetHourIn="6" TargetMinuteIn="45" ShiftTime="12"></attendType>
+  <attendType Name="B" IsShift="true" TargetHourIn="18" TargetMinuteIn="45" ShiftTime="12"></attendType>
+  <attendType Name="C" IsShift="true" TargetHourIn="6" TargetMinuteIn="45" ShiftTime="12"></attendType>
+  <attendType Name="D" IsShift="true" TargetHourIn="18" TargetMinuteIn="45" ShiftTime="12"></attendType>
+</attendTypes>
