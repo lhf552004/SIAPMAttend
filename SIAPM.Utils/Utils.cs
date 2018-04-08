@@ -74,7 +74,7 @@ namespace SIAPM.Utils
 
                 AttendType attendType = new AttendType()
                 {
-                    Name = Name,
+                    AttendTypeName = Name,
                     IsShift = IsShift,
                     TargetHourIn = TargetHourIn,
                     TargetMinuteIn = TargetMinuteIn,
@@ -104,7 +104,7 @@ namespace SIAPM.Utils
                 bool.TryParse(GenderStr, out Gender);
 
                 var Name = xEmployee.Attribute("Name").Value;
-                var AttendType = attendTypes.Where(a => a.Name == AttendTypeName).FirstOrDefault();
+                var AttendType = attendTypes.Where(a => a.AttendTypeName == AttendTypeName).FirstOrDefault();
                 Employee employee = new Employee()
                 {
                     EmployeeID = EmployeeID,
@@ -205,7 +205,7 @@ namespace SIAPM.Utils
             XElement xEmployee = new XElement("employee");
             xEmployee.SetAttributeValue("EmployeeID", employee.EmployeeID);
             xEmployee.SetAttributeValue("Age", employee.Age);
-            xEmployee.SetAttributeValue("AttendType", employee.AttendType.Name);
+            xEmployee.SetAttributeValue("AttendType", employee.AttendType.AttendTypeName);
             xEmployee.SetAttributeValue("Gender", employee.Gender.ToString());
             xEmployee.SetAttributeValue("Name", employee.Name);
             xeleEmployees.Add(xEmployee);
@@ -228,14 +228,24 @@ namespace SIAPM.Utils
             XElement xEmployee = xeleEmployees.Elements().Where(x => x.Attribute("EmployeeID").Value == employee.EmployeeID).Single(); //拉姆达表达式  
             xEmployee.SetAttributeValue("EmployeeID", employee.EmployeeID);
             xEmployee.SetAttributeValue("Age", employee.Age);
-            xEmployee.SetAttributeValue("AttendType", employee.AttendType.Name);
+            xEmployee.SetAttributeValue("AttendType", employee.AttendType.AttendTypeName);
             xEmployee.SetAttributeValue("Gender", employee.Gender.ToString());
             xEmployee.SetAttributeValue("Name", employee.Name);
             xConfigdoc.Save(sourcePath);
         }
+        public static void updateAttendType(AttendType attendType)
+        {
+            XElement xAttenType = xeleAttendTypes.Elements().Where(x => x.Attribute("Name").Value == attendType.AttendTypeName).Single(); //拉姆达表达式  
+            xAttenType.SetAttributeValue("Name", attendType.AttendTypeName);
+            xAttenType.SetAttributeValue("TargetHourIn", attendType.TargetHourIn);
+            xAttenType.SetAttributeValue("TargetMinuteIn", attendType.TargetMinuteIn);
+            xAttenType.SetAttributeValue("ShiftTime", attendType.ShiftTime);
+            xAttenType.SetAttributeValue("IsShift", attendType.IsShift);
+            xConfigdoc.Save(sourcePath);
+        }
         public static AttendType getAttendType(string attendTypeName)
         {          
-            var attendType = attendTypes.Where(a => a.Name == attendTypeName).FirstOrDefault();
+            var attendType = attendTypes.Where(a => a.AttendTypeName == attendTypeName).FirstOrDefault();
             return attendType;
         }
         public static Employee getEmployee(string employeeID)
@@ -252,7 +262,7 @@ namespace SIAPM.Utils
             //在已存在的节点上添加属性和数据  
 
             XElement xAttendType = new XElement("attendType");
-            xAttendType.SetAttributeValue("Name", attendType.Name);
+            xAttendType.SetAttributeValue("Name", attendType.AttendTypeName);
             xAttendType.SetAttributeValue("IsShift", attendType.IsShift);
             xAttendType.SetAttributeValue("TargetHourIn", attendType.TargetHourIn);
             xAttendType.SetAttributeValue("TargetMinuteIn", attendType.TargetMinuteIn);
@@ -268,7 +278,7 @@ namespace SIAPM.Utils
         }
         public static void deleteAttendType(string name)
         {
-            var theAttendType = attendTypes.Where(e => e.Name == name).FirstOrDefault();
+            var theAttendType = attendTypes.Where(e => e.AttendTypeName == name).FirstOrDefault();
             if (theAttendType != null)
             {
                 attendTypes.Remove(theAttendType);
@@ -290,79 +300,79 @@ namespace SIAPM.Utils
             xExportFolderElement.Value = newExportPath;
             xConfigdoc.Save(sourcePath);
         }
-        private static void loadAttendTypes()
-        {
-            var attendTypeDoc = new XmlDocument();
-            var sourcePath = Environment.CurrentDirectory + "\\AttendTypes.xml";
-            attendTypeDoc.Load(sourcePath);
-            string xPath = "//attendType";
-            var sourceElements = attendTypeDoc.SelectNodes(xPath);
-            foreach (XmlNode theNode in sourceElements)
-            {
-                XmlElement theElement = (XmlElement)theNode;
-                //get attributes of source element
-                var Name = theElement.GetAttribute("Name");
-                var IsShiftStr = theElement.GetAttribute("IsShift");
-                bool IsShift = false;
-                bool.TryParse(IsShiftStr, out IsShift);
+        //private static void loadAttendTypes()
+        //{
+        //    var attendTypeDoc = new XmlDocument();
+        //    var sourcePath = Environment.CurrentDirectory + "\\AttendTypes.xml";
+        //    attendTypeDoc.Load(sourcePath);
+        //    string xPath = "//attendType";
+        //    var sourceElements = attendTypeDoc.SelectNodes(xPath);
+        //    foreach (XmlNode theNode in sourceElements)
+        //    {
+        //        XmlElement theElement = (XmlElement)theNode;
+        //        //get attributes of source element
+        //        var Name = theElement.GetAttribute("Name");
+        //        var IsShiftStr = theElement.GetAttribute("IsShift");
+        //        bool IsShift = false;
+        //        bool.TryParse(IsShiftStr, out IsShift);
 
-                var TargetHourInStr = theElement.GetAttribute("TargetHourIn");
-                int TargetHourIn = 9;
-                int.TryParse(TargetHourInStr, out TargetHourIn);
+        //        var TargetHourInStr = theElement.GetAttribute("TargetHourIn");
+        //        int TargetHourIn = 9;
+        //        int.TryParse(TargetHourInStr, out TargetHourIn);
 
-                var TargetMinuteInStr = theElement.GetAttribute("TargetMinuteIn");
-                int TargetMinuteIn = 0;
-                int.TryParse(TargetMinuteInStr, out TargetMinuteIn);
+        //        var TargetMinuteInStr = theElement.GetAttribute("TargetMinuteIn");
+        //        int TargetMinuteIn = 0;
+        //        int.TryParse(TargetMinuteInStr, out TargetMinuteIn);
 
-                var ShiftTimeStr = theElement.GetAttribute("ShiftTime");
-                int ShiftTime = 0;
-                int.TryParse(ShiftTimeStr, out ShiftTime);
+        //        var ShiftTimeStr = theElement.GetAttribute("ShiftTime");
+        //        int ShiftTime = 0;
+        //        int.TryParse(ShiftTimeStr, out ShiftTime);
 
-                AttendType attendType = new AttendType()
-                {
-                    Name = Name,
-                    IsShift = IsShift,
-                    TargetHourIn = TargetHourIn,
-                    TargetMinuteIn = TargetMinuteIn,
-                    ShiftTime = ShiftTime
-                };
-                attendTypes.Add(attendType);
-            }
-        }
-        private static void loadEmployees()
-        {
+        //        AttendType attendType = new AttendType()
+        //        {
+        //            Name = Name,
+        //            IsShift = IsShift,
+        //            TargetHourIn = TargetHourIn,
+        //            TargetMinuteIn = TargetMinuteIn,
+        //            ShiftTime = ShiftTime
+        //        };
+        //        attendTypes.Add(attendType);
+        //    }
+        //}
+        //private static void loadEmployees()
+        //{
 
-            var employeeDoc = new XmlDocument();
-            var sourcePath = Environment.CurrentDirectory + "\\Employees.xml";
-            employeeDoc.Load(sourcePath);
-            string xPath = "//employee";
-            var sourceElements = employeeDoc.SelectNodes(xPath);
-            foreach (XmlNode theNode in sourceElements)
-            {
-                XmlElement theElement = (XmlElement)theNode;
-                //get attributes of source element
-                var EmployeeID = theElement.GetAttribute("EmployeeID");
-                var AttendTypeName = theElement.GetAttribute("AttendType");
-                var AgeStr = theElement.GetAttribute("Age");
-                int Age = 9;
-                int.TryParse(AgeStr, out Age);
+        //    var employeeDoc = new XmlDocument();
+        //    var sourcePath = Environment.CurrentDirectory + "\\Employees.xml";
+        //    employeeDoc.Load(sourcePath);
+        //    string xPath = "//employee";
+        //    var sourceElements = employeeDoc.SelectNodes(xPath);
+        //    foreach (XmlNode theNode in sourceElements)
+        //    {
+        //        XmlElement theElement = (XmlElement)theNode;
+        //        //get attributes of source element
+        //        var EmployeeID = theElement.GetAttribute("EmployeeID");
+        //        var AttendTypeName = theElement.GetAttribute("AttendType");
+        //        var AgeStr = theElement.GetAttribute("Age");
+        //        int Age = 9;
+        //        int.TryParse(AgeStr, out Age);
 
-                var GenderStr = theElement.GetAttribute("Gender");
-                bool Gender = true;
-                bool.TryParse(GenderStr, out Gender);
-                var Name = theElement.GetAttribute("Name");
-                var AttendType = attendTypes.Where(a => a.Name == AttendTypeName).FirstOrDefault();
-                Employee employee = new Employee()
-                {
-                    EmployeeID = EmployeeID,
-                    AttendType = AttendType,
-                    Age = Age,
-                    Gender = Gender,
-                    Name = Name
-                };
-                employees.Add(employee);
-            }
-        }
+        //        var GenderStr = theElement.GetAttribute("Gender");
+        //        bool Gender = true;
+        //        bool.TryParse(GenderStr, out Gender);
+        //        var Name = theElement.GetAttribute("Name");
+        //        var AttendType = attendTypes.Where(a => a.Name == AttendTypeName).FirstOrDefault();
+        //        Employee employee = new Employee()
+        //        {
+        //            EmployeeID = EmployeeID,
+        //            AttendType = AttendType,
+        //            Age = Age,
+        //            Gender = Gender,
+        //            Name = Name
+        //        };
+        //        employees.Add(employee);
+        //    }
+        //}
         private static string checkFormatDatetime(string dateTimeString)
         {
             string formatedDatetime = dateTimeString;

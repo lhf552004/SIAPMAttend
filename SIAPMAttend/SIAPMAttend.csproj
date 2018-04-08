@@ -68,6 +68,12 @@
     <Compile Include="Attend.Designer.cs">
       <DependentUpon>Attend.cs</DependentUpon>
     </Compile>
+    <Compile Include="AttendTypeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AttendTypeForm.Designer.cs">
+      <DependentUpon>AttendTypeForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Class1.cs" />
     <Compile Include="Abstraction.cs" />
     <Compile Include="BlackCoffee.cs" />
@@ -90,6 +96,9 @@
     </Compile>
     <EmbeddedResource Include="Attend.resx">
       <DependentUpon>Attend.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AttendTypeForm.resx">
+      <DependentUpon>AttendTypeForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -12,7 +12,7 @@ namespace SIAPM.Entities
     {
         
         public bool IsShift { get; set; }
-        public string Name { get; set; }
+        public string AttendTypeName { get; set; }
         public int TargetHourIn { get; set; }
         public int TargetMinuteIn { get; set; }
         public int ShiftTime { get; set; }

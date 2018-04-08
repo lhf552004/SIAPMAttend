@@ -220,7 +220,9 @@ namespace SIAPMAttend
         private void EditAttendTypeButton_Click(object sender, EventArgs e)
         {
             //todo
-            MessageBox.Show("TODO!");
+            //MessageBox.Show("TODO!");
+            AttendTypeForm attendTypeForm = new AttendTypeForm();
+            attendTypeForm.ShowDialog();
         }
     }
 }

@@ -13,16 +13,11 @@ using System.Xml;
 
 namespace SIAPMAttend
 {
-    public enum TranslateFromEnum
-    {
-        Undefined = 0,
-        MandarinToEnglish = 1,
-        EnglishToMandarin = 2
-    }
+    
 
-    public partial class EmployeesForm : Form
+    public partial class AttendTypeForm : Form
     {
-        public EmployeesForm()
+        public AttendTypeForm()
         {
             InitializeComponent();
         }
@@ -44,9 +39,11 @@ namespace SIAPMAttend
         private const int EMPTYCRITERIALENGTH = 8;
         private Dictionary<string, string> criteriaDic = new Dictionary<string, string>();
         private string selectedAttendType = "";
-        private int age = -1;
+        private int _targetHourIn = -1;
+        private int _targetMinuteIn = -1;
+        private int _shiftTime = -1;
         private bool gender = false;
-        private Employee currentEmployee;
+        private AttendType currentAttendType;
         #endregion
 
         #region "Handler Method"
@@ -221,7 +218,7 @@ namespace SIAPMAttend
 
             //load employees
             updateDataGridView();
-            loadAttendType();
+            
             //criteriaDic.Add("id", "");
             //criteriaDic.Add("label", "");
             //criteriaDic.Add("OriginalText", "");
@@ -284,9 +281,9 @@ namespace SIAPMAttend
             {
 
 
-                if (currentEmployee != null)
+                if (currentAttendType != null)
                 {
-                    Utils.updateEmployee(currentEmployee);
+                    Utils.updateAttendType(currentAttendType);
                     updateDataGridView();
                     SaveButton.Enabled = false;
                     MessageBox.Show("Update successfully.");
@@ -302,33 +299,34 @@ namespace SIAPMAttend
             }
         }
 
-        private bool checkNewEmployee()
+        private bool checkNewAttendType()
         {
-            if (string.IsNullOrEmpty(EmployeeIDTextBox.Text))
+            if (string.IsNullOrEmpty(AttendTypeNameTextBox.Text))
             {
-                MessageBox.Show("Please enter employee ID!");
+                MessageBox.Show("Please enter AttendType Name!");
                 return false;
             }
-            if (string.IsNullOrEmpty(EmployeeNameTextBox.Text))
+           
+            
+            if (!int.TryParse(TargetHourInTextBox.Text, out _targetHourIn))
             {
-                MessageBox.Show("Please enter employee Name!");
+                MessageBox.Show("Please enter correct number for target Hour In!");
                 return false;
             }
-            if (string.IsNullOrEmpty(selectedAttendType))
+            if (!int.TryParse(TargetMinuteInTextBox.Text, out _targetMinuteIn))
             {
-                MessageBox.Show("Please select attendtype!");
+                MessageBox.Show("Please enter correct number for target Minute In!");
                 return false;
             }
-            if (!int.TryParse(AgeTextBox.Text, out age))
+            if (IsShiftCheckBox.Checked == true)
             {
-                MessageBox.Show("Please enter correct number for age!");
-                return false;
+                if (!int.TryParse(ShiftTimeTextBox.Text, out _shiftTime))
+                {
+                    MessageBox.Show("Please enter correct number for shift Time!");
+                    return false;
+                }
             }
-            if (!bool.TryParse(GenderTextBox.Text, out gender))
-            {
-                MessageBox.Show("Please enter true or false for gender!");
-                return false;
-            }
+           
             return true;
         }
 
@@ -614,20 +612,20 @@ namespace SIAPMAttend
             this.ToTranslatedataGridView.Rows.Clear();
             
             int index = 0;
-            foreach (var employee in Utils.getEmployees())
+            foreach (var attendType in Utils.getAttendTypes())
             {
 
                 index = this.ToTranslatedataGridView.Rows.Add();
 
-                this.ToTranslatedataGridView.Rows[index].Cells["EmployeeID"].Value = employee.EmployeeID;
+                this.ToTranslatedataGridView.Rows[index].Cells["AttendTypeNameCol"].Value = attendType.AttendTypeName;
 
-                this.ToTranslatedataGridView.Rows[index].Cells["EmployeeName"].Value = employee.Name;
+                this.ToTranslatedataGridView.Rows[index].Cells["TargetHourInCol"].Value = attendType.TargetHourIn;
 
-                this.ToTranslatedataGridView.Rows[index].Cells["Age"].Value = employee.Age;
+                this.ToTranslatedataGridView.Rows[index].Cells["TargetMinuteInCol"].Value = attendType.TargetMinuteIn;
 
-                this.ToTranslatedataGridView.Rows[index].Cells["AttendType"].Value = employee.AttendType.AttendTypeName;
+                this.ToTranslatedataGridView.Rows[index].Cells["ShiftTimeCol"].Value = attendType.ShiftTime;
 
-                this.ToTranslatedataGridView.Rows[index].Cells["Gender"].Value = employee.Gender.ToString();
+                this.ToTranslatedataGridView.Rows[index].Cells["IsShiftCol"].Value = attendType.IsShift;
                 
             }
         }
@@ -790,17 +788,7 @@ namespace SIAPMAttend
 
 
         }
-        private void loadAttendType()
-        {
-            AttendTypeComboBox.Items.Clear();
-            CurAttendTypeComboBox.Items.Clear();
-            foreach (var attendType in Utils.getAttendTypes())
-            {
-                CurAttendTypeComboBox.Items.Add(attendType.AttendTypeName);
-                AttendTypeComboBox.Items.Add(attendType.AttendTypeName);
-
-            }
-        }
+        
         /// <summary>
         /// There is four type text to criteria
         /// id,attribute
@@ -840,26 +828,22 @@ namespace SIAPMAttend
 
         #endregion
 
-        private void AttendTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            selectedAttendType = AttendTypeComboBox.Text;
-
-        }
+        
 
         private void NewButton_Click(object sender, EventArgs e)
         {
-            if (checkNewEmployee())
+            if (checkNewAttendType())
             {
-                var attendType = Utils.getAttendType(selectedAttendType);
-                Employee newEmployee = new Employee()
+                
+                AttendType newEmployee = new AttendType()
                 {
-                    EmployeeID = EmployeeIDTextBox.Text,
-                    Name = EmployeeNameTextBox.Text,
-                    Age = age,
-                    Gender = gender,
-                    AttendType = attendType
+                    TargetHourIn = _targetHourIn,
+                    AttendTypeName = AttendTypeNameTextBox.Text,
+                    TargetMinuteIn = _targetMinuteIn,
+                    IsShift = IsShiftCheckBox.Checked,
+                    ShiftTime = _shiftTime
                 };
-                Utils.addEmployee(newEmployee);
+                Utils.addAttendType(newEmployee);
                 updateDataGridView();
             }
         }
@@ -869,9 +853,9 @@ namespace SIAPMAttend
             int rowIndex = e.RowIndex;
             int columnIndex = e.ColumnIndex;
             DataGridViewRow theRow = this.ToTranslatedataGridView.Rows[rowIndex];
-            string employeeID = theRow.Cells[0].Value.ToString();
+            string attendTypeName = theRow.Cells[0].Value.ToString();
 
-            updateCurEmployee(employeeID);
+            updateCurAttendType(attendTypeName);
 
             //int rowIndex = e.RowIndex;
             //int columnIndex = e.ColumnIndex;
@@ -891,23 +875,23 @@ namespace SIAPMAttend
         {
 
         }
-        private void updateCurEmployee(string employeeID)
+        private void updateCurAttendType(string attendTypeName)
         {
-            currentEmployee = Utils.getEmployee(employeeID);
-            CurEmployeeIDTextBox.Text = currentEmployee.EmployeeID;
-            CurEmployeeNameTextBox.Text = currentEmployee.Name;
-            CurEmployeeAgeTextBox.Text = currentEmployee.Age.ToString();
-            CurEmployeeGenderTextBox.Text = currentEmployee.Gender.ToString();
-            CurEmployeeAttendTypeTextBox.Text = currentEmployee.AttendType.AttendTypeName;
+            currentAttendType = Utils.getAttendType(attendTypeName);
+            CurAttendTypeNameTextBox.Text = currentAttendType.AttendTypeName;
+            CurAttendTypeTargetHourInTextBox.Text = currentAttendType.TargetHourIn.ToString();
+            CurAttendTypeTargetMinuteInTextBox.Text = currentAttendType.TargetMinuteIn.ToString();
+            CurAttendTypeShiftTimeTextBox.Text = currentAttendType.ShiftTime.ToString();
+            CurAttendTypeIsShiftCheckBox.Checked = currentAttendType.IsShift;
         }
         private void ToTranslatedataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             int rowIndex = e.RowIndex;
             int columnIndex = e.ColumnIndex;
             DataGridViewRow theRow = this.ToTranslatedataGridView.Rows[rowIndex];
-            string employeeID = theRow.Cells[0].Value.ToString();
+            string attendTypeName = theRow.Cells[0].Value.ToString();
 
-            updateCurEmployee(employeeID);
+            updateCurAttendType(attendTypeName);
             //if (theRow.Cells[0].Value != null)
             //{
             //    MessageBox.Show(theRow.Cells[0].Value.ToString());
@@ -920,61 +904,24 @@ namespace SIAPMAttend
 
         private void CurEmployeeNameTextBox_TextChanged(object sender, EventArgs e)
         {
-            currentEmployee.Name = CurEmployeeNameTextBox.Text.Trim();
+            currentAttendType.AttendTypeName = CurAttendTypeNameTextBox.Text.Trim();
 
             SaveButton.Enabled = true;
         }
 
-        private void CurEmployeeAgeTextBox_TextChanged(object sender, EventArgs e)
-        {
-            int age = -1;
-            if(int.TryParse(CurEmployeeAgeTextBox.Text,out age))
-            {
-                currentEmployee.Age = age;
-                SaveButton.Enabled = true;
-            }
-            
-        }
+       
 
-        private void CurAttendTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var theAttendTypeStr = CurAttendTypeComboBox.Text;
-            var attendType = Utils.getAttendType(theAttendTypeStr);
-            if(attendType != null)
-            {
-                currentEmployee.AttendType = attendType;
-                SaveButton.Enabled = true;
-            }
-            else
-            {
-                MessageBox.Show("could not found attendType");
-            }
-           
-        }
+        
 
-        private void CurEmployeeGenderTextBox_TextChanged(object sender, EventArgs e)
-        {
-            bool gender = false;
-            if (bool.TryParse(CurEmployeeGenderTextBox.Text, out gender))
-            {
-                currentEmployee.Gender = gender;
-                SaveButton.Enabled = true;
-            }
-            SaveButton.Enabled = true;
-        }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            if (currentEmployee != null)
+            if (currentAttendType != null)
             {
-                Utils.deleteEmployee(currentEmployee.EmployeeID);
+                Utils.deleteAttendType(currentAttendType.AttendTypeName);
                 updateDataGridView();
-                CurEmployeeIDTextBox.Text = "";
-                CurEmployeeAgeTextBox.Text = "";
-                CurEmployeeGenderTextBox.Text = "";
-                CurEmployeeNameTextBox.Text = "";
-                CurEmployeeAttendTypeTextBox.Text = "";
-                currentEmployee = null;
+                
+                currentAttendType = null;
                 MessageBox.Show("Delete successfully.");
             }
         }
